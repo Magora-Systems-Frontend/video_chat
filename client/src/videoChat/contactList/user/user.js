@@ -5,13 +5,14 @@
     angular
         .module('videoChat.contactList.user', [
             'videoChat.api.users',
+            'videoChat.contactList.contact',
             'ui.router'
         ])
         .directive('vcUser', userDirective);
 
-    userDirective.$inject = ['apiUsersFactory'];
+    userDirective.$inject = ['apiUserFactory'];
 
-    function userDirective(apiUsersFactory) {
+    function userDirective(apiUserFactory) {
         return {
             restrict: 'E',
             scope: false,
@@ -22,13 +23,9 @@
         };
 
         function userController() {
-            var user = this;
+            var userCtrl = this;
 
-            user.list = apiUsersFactory.list;
-            user.options = {
-                type: 'user',
-                status: true
-            };
+            userCtrl.list = apiUserFactory.list;
 
             console.log('user init');
         }

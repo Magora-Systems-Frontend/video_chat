@@ -1,2 +1,3 @@
-ul.list-group(ng-repeat="r in roomCtrl.list")
-    contact(type='room', name='{{r.name}}', id='{{r.id}}', hasStatus='0')
+ul.list-group
+    li.user-panel(ui-sref-active="active", ng-repeat="r in roomCtrl.list")
+        vc-contact(type='room', name='r.name', id='r.id', hasStatus='0')

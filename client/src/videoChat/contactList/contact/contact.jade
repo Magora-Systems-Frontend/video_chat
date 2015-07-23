@@ -1,9 +1,8 @@
-li.user-panel(ui-sref-active="active")
-   div(style="width: 60px; float:left;")
-      div.image
-         img(alt="img" src="#" style="width: 60px; height:60px;")
-      a(href="#" ng-if="'{{hasStatus}}'")
-         i.fa.fa-circle.text-success Online
-   div(style="float:left; padding-left:15px;")
-      div.info
-         p(style="cursor:pointer;" ng-click="homepage.chat({type: '{{type}}', id: '{{id}}'})") {{name}}
+div(style="width: 60px; float:left;")
+    div.image
+        img(alt="img" src="#" style="width: 60px; height:60px;")
+    a(href="#" ng-if="'{{hasStatus}}'")
+        i.fa.fa-circle.text-success Online
+div(style="float:left; padding-left:15px;")
+    div.info
+        p(style="cursor:pointer;" ui-sref="homepage.chat({type: '{{type}}', roomId: '{{id}}'})") {{name}}

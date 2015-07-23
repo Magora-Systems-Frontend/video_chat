@@ -8,11 +8,11 @@
             'videoChat.contactList.room',
             'videoChat.contactList.user'
         ])
-        .directive('vcContactList', [
-            contactListDirective
-        ]);
+        .directive('vcContactList', contactListDirective);
 
-    function contactListDirective(){
+    contactListDirective.$inject = ['$state'];
+
+    function contactListDirective($state) {
         return {
             restrict: 'E',
             scope: {
@@ -24,9 +24,7 @@
             templateUrl: 'videoChat/contactList/contactList.html'
         };
 
-        contactListController.$inject = ['$state'];
-
-        function contactListController($state) {
+        function contactListController() {
             var contactList = this;
 
             contactList.type = $state.type || 'user';

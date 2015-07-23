@@ -1,1 +1,9 @@
-div text
+div.box.box-default.direct-chat.direct-chat-default(style="height: auto")
+    div.box-body
+        div.direct-chat-messages
+            div.direct-chat-msg(ui-sref-active="active", ng-repeat="t in textCtrl.list", ng-class="{right: textCtrl.roomId === t.sender.id}")
+                div.direct-chat-info.clearfix
+                    span.direct-chat-name.pull-left {{t.sender.name}}
+                    span.direct-chat-timestamp.pull-right {{t.date}}
+                img.direct-chat-img(src="dist/img/user1-128x128.jpg", alt="user img")
+                div.direct-chat-text {{t.message}}

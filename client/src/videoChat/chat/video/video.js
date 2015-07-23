@@ -10,7 +10,7 @@
             videoDirective
         ]);
 
-    function videoDirective(){
+    function videoDirective() {
         return {
             restrict: 'E',
             scope: false,

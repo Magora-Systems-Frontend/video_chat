@@ -4,11 +4,13 @@
 
     angular
         .module('videoChat.chat.text', [])
-        .directive('vcText', [
-            textDirective
-        ]);
+        .directive('vcText', textDirective);
 
-    function textDirective(){
+
+    function textDirective() {
+
+        textController.$inject = ['$state', 'apiMessageFactory'];
+
         return {
             restrict: 'E',
             scope: false,
@@ -18,10 +20,14 @@
             templateUrl: 'videoChat/chat/text/text.html'
         };
 
-        function textController() {
-            var text = this;
+        function textController($state, apiMessageFactory) {
+            var textCtrl = this;
+            textCtrl.roomId = $state.params.roomId;
 
-            console.log('text init');
+            apiMessageFactory.loadMessagesByUser('currentUserId', textCtrl.roomId);
+            textCtrl.list = apiMessageFactory.list;
+
+
         }
     }
 

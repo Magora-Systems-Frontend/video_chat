@@ -3,14 +3,16 @@
     'use strict';
 
     angular
-        .module('videoChat.contactList.contact', [])
+        .module('videoChat.contactList.contact', [
+            'ui.router'
+        ])
         .directive('vcContact', contactDirective);
 
     function contactDirective() {
         return {
             restrict: 'E',
             scope: {
-                type: '=',
+                type: '@',
                 name: '=',
                 id: '=',
                 hasStatus: '='

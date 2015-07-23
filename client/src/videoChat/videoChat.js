@@ -25,10 +25,6 @@
             .state('homepage', {
                 url: '/',
                 templateUrl: 'videoChat/videoChat.html'
-            })
-            .state('homepage.chat', {
-                url: ':type/:id',
-                templateUrl: 'videoChat/videoChat.html'
             });
     }
 })(angular);

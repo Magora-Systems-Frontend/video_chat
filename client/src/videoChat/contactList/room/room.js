@@ -5,24 +5,15 @@
     angular
         .module('videoChat.contactList.room', [
             'ui.router',
-            'videoChat.api.rooms'
+            'videoChat.api.room',
+            'videoChat.contactList.contact'
         ])
-        //.config(config)
         .directive('vcRoom', roomDirective);
 
-    //config.$inject = ['$stateProvider'];
 
-    //function config($stateProvider) {
-    //    $stateProvider.
-    //        state('homepage.room', {
-    //            url: 'room',
-    //            templateUrl: 'videoChat/room/room.html'
-    //        });
-    //}
+    roomDirective.$inject = ['apiRoomFactory'];
 
-    roomDirective.$inject = ['apiRoomsFactory'];
-
-    function roomDirective(apiRoomsFactory){
+    function roomDirective(apiRoomFactory) {
         return {
             restrict: 'E',
             scope: false,
@@ -33,12 +24,11 @@
         };
 
         function roomController() {
-            var room = this;
+            var roomCtrl = this;
 
-            room.list = apiRoomsFactory.list;
+            roomCtrl.list = apiRoomFactory.list;
 
             console.log('room opened');
         }
     }
-
 })(angular);
