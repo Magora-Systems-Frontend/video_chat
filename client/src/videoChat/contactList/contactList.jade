@@ -1,0 +1,8 @@
+ul.nav.nav-tabs(data-tabs="tabs")
+   li
+      a(ng-click="contactListCtrl.type = 'user'") Users
+   li
+      a(ng-click="contactListCtrl.type = 'room'") Rooms
+div.tab-content
+      vc-user(ng-if="contactListCtrl.type === 'user'")
+      vc-room(ng-if="contactListCtrl.type === 'room'")

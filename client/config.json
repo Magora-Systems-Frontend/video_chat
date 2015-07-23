@@ -13,7 +13,7 @@
   },
   "templates": {
     "params": {
-      "module": "ShopMaek"
+      "module": "VideoChat"
     },
     "src": [
       "./src/**/*.jade",
