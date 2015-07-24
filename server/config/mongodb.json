@@ -1,0 +1,9 @@
+{
+  "default": {
+    "host": "localhost",
+    "database": "video-chat",
+    "options": {
+
+    }
+  }
+}

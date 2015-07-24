@@ -1,0 +1,20 @@
+{
+  "default": {
+    "GET /migration": {
+      "controller": "Migration",
+      "action": "Index"
+    },
+    "GET /product": {
+      "controller": "Product",
+      "action": "Index"
+    },
+    "GET /layout": {
+      "controller": "Layout",
+      "action": "Index"
+    },
+    "GET /product-groups": {
+      "controller": "ProductGroup",
+      "action": "Index"
+    }
+  }
+}
