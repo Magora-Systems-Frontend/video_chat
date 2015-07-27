@@ -1,20 +1,16 @@
 {
   "default": {
-    "GET /migration": {
-      "controller": "Migration",
-      "action": "Index"
+    "POST /login": {
+      "controller": "auth",
+      "action": "Login"
     },
-    "GET /product": {
-      "controller": "Product",
-      "action": "Index"
+    "POST /register": {
+      "controller": "auth",
+      "action": "Register"
     },
-    "GET /layout": {
-      "controller": "Layout",
-      "action": "Index"
-    },
-    "GET /product-groups": {
-      "controller": "ProductGroup",
-      "action": "Index"
+    "POST /logout": {
+      "controller": "auth",
+      "action": "Logout"
     }
   }
 }

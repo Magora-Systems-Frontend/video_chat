@@ -1,82 +1,70 @@
 (function () {
+
     'use strict';
 
-    var requireDir = require('require-dir'),
-        express = require('express'),
-        merge = require('deepmerge'),
-        argv = require('minimist')(process.argv.slice(2)),
-        mongoose = require('mongoose'),
-        configs = requireDir('./config') || {},
-        appConfig = {},
-        app = express();
+    var express = require('express');
+    var app = express();
 
+
+
+    var argv = require('minimist')(process.argv.slice(2));
     app.set('env', argv.p ? 'prod' : 'dev');
 
-    for (var key in configs) {
-        if (configs.hasOwnProperty(key)) {
-            if (configs[key][app.get('env')]) {
-                appConfig[key] = merge(configs[key]['default'], configs[key][app.get('env')])
-            } else {
-                appConfig[key] = configs[key]['default']
-            }
-        }
-    }
+    var configApp = require('./config/index.js');
+    configApp.init(app.get('env'));
+    app.set('config', configApp.config);
 
-    app.set('config', appConfig);
 
-    function mongoConnect() {
-        mongoose.connect('mongodb://' + appConfig.mongodb.host + '/' + appConfig.mongodb.database, appConfig.mongodb.options)
-    }
+    if (app.get('config').cors) {
+        app.use(function (req, res, next) {
+            var cors = req.app.get('config').cors;
+            Object.keys(cors).forEach(function (key) {
+                res.header(key, cors[key]);
+            });
 
-    mongoConnect();
-
-    var models = requireDir('./models');
-
-    mongoose.connection.on('error', console.log);
-    mongoose.connection.on('disconnected', mongoConnect);
-
-    app.use(function (req, res, next) {
-
-        var cors = req.app.get('config').cors;
-
-        Object.keys(cors).forEach(function (key) {
-            res.header(key, cors[key]);
+            next();
         });
+    }
 
-        next();
+    var db = require('./database/mongooseManage.js');
+    db.init(configApp.config.mongodb);
+
+
+    var passport = require('passport');
+    var LocalStrategy = require('passport-local').Strategy;
+
+    passport.use(new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password'
+    }, function (username, password, done) {
+        User.findOne({username: username}, function (err, user) {
+            return err
+                ? done(err)
+                : user
+                ? password === user.password
+                ? done(null, user)
+                : done(null, false, {message: 'Incorrect password.'})
+                : done(null, false, {message: 'Incorrect username.'});
+        });
+    }));
+
+    passport.serializeUser(function(user, done) {
+        done(null, user.id);
     });
 
-
-    var controllers = requireDir('./controllers');
-
-    Object.keys(appConfig.route).forEach(function (pattern) {
-        var params = appConfig.route[pattern],
-            method,
-            uri;
-
-        pattern = pattern.split(' ');
-
-        if (pattern.length > 1) {
-            method = pattern[0].toLowerCase();
-            uri = pattern[1];
-        }
-        else {
-            uri = pattern[0];
-            method = 'all';
-        }
-
-        app[method](uri, function (req, res) {
-            if (!params.politics
-                && controllers[params.controller + 'Controller']
-                && controllers[params.controller + 'Controller']['action' + params.action]
-            ) {
-                controllers[params.controller + 'Controller']['action' + params.action](req, res)
-            }
+    passport.deserializeUser(function(id, done) {
+        User.findById(id, function(err,user){
+            err
+                ? done(err)
+                : done(null,user);
         });
     });
 
-    app.listen(appConfig.server.port);
-    console.log('Server running on ' + appConfig.server.port + ' port, env "' + app.get('env') + '"');
+    app.use(passport.initialize());
 
+    require('./api/services/route.js')(configApp.config, app);
 
+    app.listen(configApp.config.server.port);
+
+    console.log('Server running on ' + configApp.config.server.port + ' port, env "' + app.get('env') + '"');
 })();

@@ -1,7 +1,8 @@
 {
   "default": {
     "host": "localhost",
-    "database": "video-chat",
+    "port": "27017",
+    "database": "VideoChatDb",
     "options": {
 
     }
