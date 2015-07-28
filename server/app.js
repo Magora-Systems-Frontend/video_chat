@@ -2,13 +2,17 @@
 
     'use strict';
 
-    var express = require('express');
-    var app = express();
+    //********************CORE*************************************
 
+    var app = require('express')();
+    var http = require('http').Server(app);
+    var io = require('socket.io')(http);
 
 
     var argv = require('minimist')(process.argv.slice(2));
     app.set('env', argv.p ? 'prod' : 'dev');
+
+    //********************CONFIG***********************************
 
     var configApp = require('./config/index.js');
     configApp.init(app.get('env'));
@@ -26,9 +30,12 @@
         });
     }
 
-    var db = require('./database/mongooseManage.js');
+    //*************************DB**********************************
+    var db = require('./api/services/mongooseManage.js');
     db.init(configApp.config.mongodb);
 
+
+    //********************PASSPORT*********************************
 
     var passport = require('passport');
     var LocalStrategy = require('passport-local').Strategy;
@@ -62,9 +69,18 @@
 
     app.use(passport.initialize());
 
-    require('./api/services/route.js')(configApp.config, app);
+    //********************ROUTING**********************************
 
-    app.listen(configApp.config.server.port);
+    //require('./api/services/route.js')(configApp.config, app);
+
+    io.on('connection', function(socket){
+        console.log('a user connected');
+        socket.on('disconnect', function(){
+            console.log('user disconnected');
+        });
+    });
+
+    http.listen(configApp.config.server.port);
 
     console.log('Server running on ' + configApp.config.server.port + ' port, env "' + app.get('env') + '"');
 })();

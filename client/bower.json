@@ -21,6 +21,8 @@
     "angular-validation-match": "~1.5.0",
     "angular-loading-bar": "~0.7.1",
     "angular-cookies": "~1.4.0",
-    "adminlte": "~2.2.0"
+    "adminlte": "~2.2.0",
+    "angular-socket-io": "~0.7.0",
+    "socket.io-client": "~1.3.6"
   }
 }

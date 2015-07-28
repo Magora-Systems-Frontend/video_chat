@@ -3,7 +3,7 @@
     'use strict';
 
     var passport = require("passport");
-    var User = require('../../database/entities/User.js');
+    var User = require('../models/User.js');
 
 
 

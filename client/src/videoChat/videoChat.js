@@ -3,6 +3,7 @@
 
     angular
         .module('VideoChat', [
+            'btford.socket-io',
             'ui.router',
             'videoChat.chat',
             'videoChat.contactList'
@@ -20,6 +21,7 @@
         $locationProvider.html5Mode(true);
 
         $urlRouterProvider.otherwise('/');
+
 
         $stateProvider
             .state('homepage', {
