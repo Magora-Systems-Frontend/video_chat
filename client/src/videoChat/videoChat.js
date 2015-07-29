@@ -3,7 +3,6 @@
 
     angular
         .module('VideoChat', [
-            'btford.socket-io',
             'ui.router',
             'videoChat.chat',
             'videoChat.contactList'

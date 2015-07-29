@@ -4,73 +4,37 @@
 
     angular
         .module('videoChat.api.message', [
-            'ngResource'
+            'VideoChat.api'
         ])
         .factory('apiMessageFactory', apiMessageFactory);
 
-    apiMessageFactory.$inject = ['$resource'];
+    apiMessageFactory.$inject = ['apiSocket'];
 
-    function apiMessageFactory($resource) {
-        var defaults = {};
-        var endpoints = {};
-        var actions = {};
+    function apiMessageFactory(apiSocket) {
 
-        //$resource(apiUrl, defaults, actions)
+        /*
+        *                 {
+         sender:{
+         id: '12828461112',
+         name: 'user 1'
+         },
+         messageId: '2342342234',
+         whoIsRead: [{
+         name: 'user 1',
+         id: '12828461112'
+         }],
+         message: 'message 1 from user 1',
+         date: '08.08.2005'
+         }
+        * */
 
         var factory = {
-            list: [
-                {
-                    sender:{
-                        id: '12828461112',
-                        name: 'user 1'
-                    },
-                    messageId: '2342342234',
-                    whoIsRead: [{
-                        name: 'user 1',
-                        id: '12828461112'
-                    }],
-                    message: 'message 1 from user 1',
-                    date: '08.08.2005'
-                }, {
-                    sender: {
-                        id: '10480980811',
-                        name: 'user 3'
-                    },
-                    messageId: '123321',
-                    whoIsRead: [{
-                        name: 'user 3',
-                        id: '2342342234'
-                    }],
-                    message: 'message 2 from user 3',
-                    date: ''
-                }, {
-                    sender:{
-                        id: '12828461112',
-                        name: 'user 1'
-                    },
-                    messageId: '2342342234',
-                    whoIsRead: [{
-                        name: 'user 1',
-                        id: '12828461112'
-                    }],
-                    message: 'message 3 from user 1',
-                    date: '08.08.2005'
-                }, {
-                    sender: {
-                        id: '10480980811',
-                        name: 'user 3'
-                    },
-                    messageId: '123321',
-                    whoIsRead: [{
-                        name: 'user 3',
-                        id: '2342342234'
-                    }],
-                    message: 'message 4 from user 3',
-                    date: ''
-                }
-            ],
-            loadMessagesByUser: function (toId, fromId) {
+            list: [],
 
+            loadMessagesByUser: function (toId, fromId) {
+                apiSocket.emit('getMessages', function(resp){
+                    factory.list = resp;
+                })
             }
         };
 

@@ -1,0 +1,23 @@
+form.form(name='login.form', novalidate, ng-submit='login.submit()')
+	div.form-header
+		a.logo(href='/')
+	div.form-body
+		rm-notifications(ng-model='login.notifications')
+
+		ul.form-fields
+			li
+				div.wrap
+					span.icon.email.orange
+					input(name='identifier', type='text', placeholder='Username or email', required, ng-model='login.credentials.identifier')
+				rm-validation(form="login.form" field="login.form.identifier" validators='login.validators.identifier')
+
+			li
+				div.wrap
+					span.icon.password.orange
+					input(name='password', type='password', placeholder='Password', required, ng-model='login.credentials.password')
+				rm-validation(form="login.form" field="login.form.password" validators='login.validators.password')
+
+	div.form-footer
+		ul.actions
+			li: button(type='submit') Sign in
+			li: a.muted(href='') Forgot password?

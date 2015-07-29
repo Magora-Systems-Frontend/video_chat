@@ -11,6 +11,10 @@
     "POST /logout": {
       "controller": "auth",
       "action": "Logout"
+    },
+    "GET /getMessages": {
+      "controller": "message",
+      "action": "getUserMessages"
     }
   }
 }

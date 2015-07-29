@@ -6,10 +6,17 @@
     'use strict';
 
     angular
-        .module('VideoChat').factory('apiSocket', apiSocket);
+        .module('VideoChat.api').factory('apiSocket', apiSocket)
+        .constant('apiUrl', 'http://localhost:8088');
 
-    function apiSocket(socketFactory) {
-        var socket = socketFactory();
+    apiSocket.$inject = ["btford.socket-io", "apiUrl"];
+
+    function apiSocket(socketFactory, apiUrl) {
+        var socketConfig = {
+            //prefix:
+            ioSocket: io.connect(apiUrl)
+        };
+        var socket = socketFactory(socketConfig);
         socket.forward('error');
         return socket;
     }

@@ -11,6 +11,10 @@
         email: { type: String, required: true, unique: true }
     });
 
+    userSchema.methods.getUser = function(user){
+
+    };
+
     var User = mongoose.model('User', userSchema);
 
     module.exports = User;

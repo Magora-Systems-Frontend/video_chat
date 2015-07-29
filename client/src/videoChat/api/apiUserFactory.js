@@ -4,14 +4,14 @@
 
     angular
         .module('videoChat.api.users', [
-            'videoChat.api.message',
-            'ngResource'
+            'VideoChat.api',
+            'videoChat.api.message'
         ])
         .factory('apiUserFactory', apiUserFactory);
 
-    apiUserFactory.$inject = ['$resource'];
+    apiUserFactory.$inject = ['apiSocket'];
 
-    function apiUserFactory($resource) {
+    function apiUserFactory(apiSocket) {
         var defaults = {};
         var endpoints = {};
         var actions = {};
