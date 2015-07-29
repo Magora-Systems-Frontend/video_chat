@@ -4,11 +4,11 @@
 
     angular
         .module('videoChat.api.message', [
-            'VideoChat.api'
+            'videoChat.api'
         ])
         .factory('apiMessageFactory', apiMessageFactory);
 
-    apiMessageFactory.$inject = ['apiSocket'];
+    apiMessageFactory.$inject = ['apiSocketFactory'];
 
     function apiMessageFactory(apiSocket) {
 

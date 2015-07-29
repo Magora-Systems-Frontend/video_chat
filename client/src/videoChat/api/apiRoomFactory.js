@@ -4,13 +4,13 @@
 
     angular
         .module('videoChat.api.room', [
-            'VideoChat.api'
+            'videoChat.api'
         ])
         .factory('apiRoomFactory',apiRoomFactory);
 
-    apiRoomFactory.$inject = ['apiSocket'];
+    apiRoomFactory.$inject = ['apiSocketFactory'];
 
-    function apiRoomFactory(apiSocket) {
+    function apiRoomFactory(apiSocketFactory) {
         var defaults = {};
         var endpoints = {};
         var actions = {};

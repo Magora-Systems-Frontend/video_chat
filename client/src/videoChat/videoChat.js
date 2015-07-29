@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('VideoChat', [
+        .module('videoChat', [
             'ui.router',
             'videoChat.chat',
             'videoChat.contactList'

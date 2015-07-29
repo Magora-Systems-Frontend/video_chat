@@ -2,16 +2,18 @@
 
     'use strict';
 
+    //
+
     angular
         .module('videoChat.api.users', [
-            'VideoChat.api',
+            'videoChat.api',
             'videoChat.api.message'
         ])
         .factory('apiUserFactory', apiUserFactory);
 
-    apiUserFactory.$inject = ['apiSocket'];
+    apiUserFactory.$inject = ['apiSocketFactory'];
 
-    function apiUserFactory(apiSocket) {
+    function apiUserFactory(apiSocketFactory) {
         var defaults = {};
         var endpoints = {};
         var actions = {};

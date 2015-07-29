@@ -13,7 +13,7 @@
   },
   "templates": {
     "params": {
-      "module": "VideoChat"
+      "module": "videoChat"
     },
     "src": [
       "./src/**/*.jade",

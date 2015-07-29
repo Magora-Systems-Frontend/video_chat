@@ -5,13 +5,16 @@
 
     'use strict';
 
+    apiSocketFactory.$inject = ["socketFactory", "apiUrl"];
+
     angular
-        .module('VideoChat.api').factory('apiSocket', apiSocket)
-        .constant('apiUrl', 'http://localhost:8088');
+        .module('videoChat.api', [
+            "btford.socket-io"
+        ])
+        .constant('apiUrl', 'http://localhost:8088')
+        .factory('apiSocketFactory', apiSocketFactory);
 
-    apiSocket.$inject = ["btford.socket-io", "apiUrl"];
-
-    function apiSocket(socketFactory, apiUrl) {
+    function apiSocketFactory(socketFactory, apiUrl) {
         var socketConfig = {
             //prefix:
             ioSocket: io.connect(apiUrl)
