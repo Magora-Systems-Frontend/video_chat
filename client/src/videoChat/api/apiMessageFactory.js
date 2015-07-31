@@ -32,9 +32,9 @@
             list: [],
 
             loadMessagesByUser: function (toId, fromId) {
-                apiSocket.emit('getMessages', function(resp){
-                    factory.list = resp;
-                })
+                //apiSocket.emit('getMessages', function(resp){
+                //    factory.list = resp;
+                //})
             }
         };
 

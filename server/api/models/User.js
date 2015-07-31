@@ -11,9 +11,29 @@
         email: { type: String, required: true, unique: true }
     });
 
-    userSchema.methods.getUser = function(user){
-
+    userSchema.methods = {
+        create: create,
+        getUserById: getUserById,
+        update: update,
+        remove: remove
     };
+
+    function create(user, cb){
+        var user = new User(user);
+        user.save(cb);
+    }
+
+    function getUserById(userId){
+        return User.find({})
+    }
+
+    function update(user){
+
+    }
+
+    function remove(userId){
+
+    }
 
     var User = mongoose.model('User', userSchema);
 

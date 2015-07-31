@@ -4,22 +4,9 @@
 
     var requireDir = require('require-dir');
     var controllers = requireDir('../controllers');
-    var http, io;
 
-    //var connections = function(){
-    //
-    //    var sockets = [];
-    //
-    //    io.on('connection', function(socket){
-    //        socket.on();
-    //        sockets.push(socket);
-    //
-    //    });
-    //};
 
     function configure(config, app) {
-        http = require('http').Server(app);
-        io = require('socket.io')(http);
         Object.keys(config.route).forEach(function (pattern) {
             var params = config.route[pattern],
                 method,

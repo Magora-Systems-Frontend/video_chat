@@ -16,11 +16,20 @@
 
     function apiSocketFactory(socketFactory, apiUrl) {
         var socketConfig = {
-            //prefix:
-            ioSocket: io.connect(apiUrl)
+            ioSocket: io.connect(apiUrl, {login: 'test1', password: '123'})
         };
         var socket = socketFactory(socketConfig);
-        socket.forward('error');
+
+        socket.on('connect', function(){
+            socket.emit('login', {
+                login: "test1",
+                password: "123"
+            });
+            socket.on('setToken', function(message){
+                window.sessionStorage["videoChat"] = message.token;
+            });
+        });
+
         return socket;
     }
 

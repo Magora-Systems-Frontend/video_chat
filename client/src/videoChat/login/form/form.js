@@ -1,4 +1,4 @@
-(function () {
+function form () {
 	// jshint latedef: false
 	'use strict';
 
@@ -114,4 +114,4 @@
 		}
 	}
 
-})();
+};

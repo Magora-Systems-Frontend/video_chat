@@ -23,7 +23,7 @@
      * @returns {Query}
      */
     messageSchema.methods.getMessagesBySenderId = function(senderId, senderType){
-        return this.model('Message').find({senderId: senderId, senderType: senderType})
+        return Message.find({senderId: senderId, senderType: senderType})
     };
     /**
      *

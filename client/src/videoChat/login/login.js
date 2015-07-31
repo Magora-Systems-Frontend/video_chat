@@ -1,4 +1,4 @@
-(function () {
+function login () {
 	// jshint latedef: false
 	'use strict';
 
@@ -22,4 +22,4 @@
 		});
 	}
 
-})();
+};

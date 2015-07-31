@@ -5,12 +5,20 @@
     var passport = require("passport");
     var User = require('../models/User.js');
 
+    function _ensureAuthenticated(req, res, next) {
+        if (req.isAuthenticated()) { return next(); }
+        res.redirect('/login')
+    }
+
     var messageController = {
         actionGetUserMessages: getUserMessages
     };
 
     function getUserMessages(req, res) {
-        res.json([ {
+        if(!req.isAuthenticated()) return;
+        res.json(
+        [
+        {
             sender:{
                 id: '12828461112',
                 name: 'user 1'

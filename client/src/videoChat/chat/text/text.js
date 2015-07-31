@@ -24,7 +24,7 @@
             var textCtrl = this;
             textCtrl.roomId = $state.params.roomId;
 
-            apiMessageFactory.loadMessagesByUser('currentUserId', textCtrl.roomId);
+            //apiMessageFactory.loadMessagesByUser('currentUserId', textCtrl.roomId);
             textCtrl.list = apiMessageFactory.list;
 
 
