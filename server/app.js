@@ -7,7 +7,7 @@
     var app = require('express')();
     var http = require('http').Server(app);
     var io = require('socket.io')(http);
-    var bcrypt = require('bcryptjs');
+    var bcrypt = require('bcrypt-nodejs');
 
     var argv = require('minimist')(process.argv.slice(2));
     app.set('env', argv.p ? 'prod' : 'dev');

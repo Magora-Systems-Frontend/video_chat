@@ -86,7 +86,6 @@ function form () {
 			// and let the user in.
 			function callbackLoginSuccess(response) {
 				if(response.admin){
-					debugger;
 					sessionAccountFactory.setAccountDetails({
 						identifier: login.credentials.identifier,
 						token: response.token,
@@ -114,4 +113,4 @@ function form () {
 		}
 	}
 
-};
+}

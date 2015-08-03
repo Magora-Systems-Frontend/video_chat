@@ -9,9 +9,9 @@
 
     angular
         .module('videoChat.api', [
-            "btford.socket-io"
+            "btford.socket-io",
+            "videoChat.constants"
         ])
-        .constant('apiUrl', 'http://localhost:8088')
         .factory('apiSocketFactory', apiSocketFactory);
 
     function apiSocketFactory(socketFactory, apiUrl) {

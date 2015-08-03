@@ -6,9 +6,9 @@
     var Schema = mongoose.Schema;
 
     var tokenSchema = new Schema({
-        key: {type: "String", required: true},
-        userId: {type: "Integer", required: true},
-        expireDate: {type: "Date", required: true, default: new Date(date.getTime() + 30 * 60000) }
+        key: {type: String, required: true},
+        userId: {type: Number, required: true},
+        expireDate: {type: Date, required: true, default: new Date(Date.now() + 30 * 60000) }
     });
 
     tokenSchema.methods = {

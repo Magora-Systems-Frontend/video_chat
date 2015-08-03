@@ -6,14 +6,14 @@
     var Schema = mongoose.Schema;
 
     var messageSchema = new Schema({
-        text: {type: "String", required: true},
-        senderId: {type: "Integer", required: true},
-        senderType: {type: "String", required: true},
-        listenerId: {type: "Integer", required: true},
+        text: {type: String, required: true},
+        senderId: {type: Number, required: true},
+        senderType: {type: String, required: true},
+        listenerId: {type: Number, required: true},
         whoIsRead: {
-            id: {type: "Integer"}
+            id: {type: Number}
         },
-        date: {type: "Date", required: true, default: Date.now }
+        date: {type: Date, required: true, default: Date.now() }
     });
 
     /**
