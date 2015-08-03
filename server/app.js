@@ -7,13 +7,15 @@
     var app = require('express')();
     var http = require('http').Server(app);
     var io = require('socket.io')(http);
-    var bcrypt = require('')
+    var bcrypt = require('bcryptjs');
 
     var argv = require('minimist')(process.argv.slice(2));
     app.set('env', argv.p ? 'prod' : 'dev');
 
-    //********************CONFIG***********************************
+    var User = require('./api/models/User.js');
+    var Token = require('./api/models/Token.js');
 
+    //********************CONFIG***********************************
     var configApp = require('./config/index.js');
     configApp.init(app.get('env'));
     app.set('config', configApp.config);
@@ -38,8 +40,37 @@
     //********************PASSPORT*********************************
 
     var passport = require('passport');
+    var _token = (function() {
+        var txt =
+            'Идет гражданская война. Космические корабли' +
+            'повстанцев, наносящие удар с тайной базы,' +
+            'одержали первую победу, в схватке' +
+            'со зловещей Галактической Империей.' +
+            'Во время сражения, разведчикам повстанцев' +
+            'удалось похитить секретные планы,' +
+            'связанные с главным оружием Империи -' +
+            'Звездой Смерти, бронированной космической' +
+            'станцией, способной уничтожить целую планету.' +
+            'Преследуемая имперскими агентами принцесса' +
+            'Лея спешит домой на своем звездном корабле.' +
+            'При ней находятся похищенные планы,' +
+            'которые могут спасти ее народ' +
+            'и вернуть свободу галактике.';
 
-    var tokens = {};
+        function compare(login, hash){
+            return bcrypt.compareSync((login + txt), hash)
+        }
+
+        function getHash(login){
+            return bcrypt.hashSync(txt+login);
+        }
+
+        return {
+            compare: compare,
+            getHash: getHash
+        }
+
+    })();
 
     var LocalStrategy = require('passport-local').Strategy;
     passport.use(new LocalStrategy({
@@ -65,61 +96,11 @@
                 } else if (!bcrypt.compareSync(password, user.password)) {
                     next(false, false, 'Wrong password');
                 } else {
+                    Token.create({key: _token.getHash(user.userName)});
                     next(false, user);
                 }
             });
     }));
-
-    var User = require('../models/User.js');
-    passport.use(new RememberMeStrategy(
-        function(token, done) {
-            consumeRememberMeToken(token, function(err, uid) {
-                if (err) { return done(err); }
-                if (!uid) { return done(null, false); }
-
-                findById(uid, function(err, user) {
-                    if (err) { return done(err); }
-                    if (!user) { return done(null, false); }
-                    return done(null, user);
-                });
-            });
-        },
-        issueToken
-    ));
-
-    function issueToken(user, done) {
-        var token = utils.randomString(64);
-        saveRememberMeToken(token, user.id, function(err) {
-            if (err) { return done(err); }
-            return done(null, token);
-        });
-    }
-
-
-    function consumeRememberMeToken(token, fn) {
-        var uid = tokens[token];
-        // invalidate the single-use token
-        delete tokens[token];
-        return fn(null, uid);
-    }
-
-    function saveRememberMeToken(token, uid, fn) {
-        tokens[token] = uid;
-        return fn();
-    }
-
-
-    passport.serializeUser(function(user, done) {
-        done(null, user.id);
-    });
-
-    passport.deserializeUser(function(id, done) {
-        User.findById(id, function(err,user){
-            err
-                ? done(err)
-                : done(null,user);
-        });
-    });
 
     app.use(passport.initialize());
 
@@ -127,12 +108,6 @@
 
     require('./api/services/route.js')(configApp.config, app);
     require('./api/services/socketService.js')(http);
-    //io.on('connection', function(socket){
-    //    console.log('a user connected');
-    //    socket.on('disconnect', function(){
-    //        console.log('user disconnected');
-    //    });
-    //});
 
     http.listen(configApp.config.server.port);
 

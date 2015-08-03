@@ -23,8 +23,8 @@
         user.save(cb);
     }
 
-    function getUserById(userId){
-        return User.find({})
+    function getUserById(userId, cb){
+        return User.find({id: userId}, cb)
     }
 
     function update(user){

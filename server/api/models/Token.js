@@ -22,7 +22,7 @@
     /**
      * check token on expiration date
      * @param token
-     * @returns {boolean}
+     * @returns boolean
      * @private
      */
     function _isExpired(token, cb){
@@ -40,7 +40,10 @@
      */
     function checkTokenByKey(tokenKey, cb){
         var curToken = Token.find({key: tokenKey});
-        cb(curToken && !_isExpired(curToken));
+        if(!curToken)
+            cb(false);
+        else
+            !_isExpired(curTokenm, cb);
     }
 
 
