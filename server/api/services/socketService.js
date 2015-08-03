@@ -38,6 +38,11 @@
             function sendToken(){
                 socket.emit('setToken', {})
             }
+
+            function closeConnection(){
+                socket.disconnect('unauthorized');
+            }
+
             function onLogin() {
                 console.log('authorized');
 
@@ -70,9 +75,6 @@
                     socket.user_id = message.userId;
                     socket.broadcast.to(socket.room).emit("say", message);
                 });
-            }
-            function closeConnection(){
-                socket.disconnect('unauthorized');
             }
         });
     };
