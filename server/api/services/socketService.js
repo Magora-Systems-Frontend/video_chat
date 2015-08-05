@@ -4,6 +4,7 @@
 
     var requireDir = require('require-dir');
     var controllers = requireDir('../controllers');
+    var User = require('../models/User');
 
     var io;
 
@@ -11,22 +12,57 @@
 
         io = require('socket.io')(http);
         var users = {};
+        var rooms = {};
 
         io.on('connection', function(socket){
 
-            socket.on('login', function(message){
-               //var message = JSON.parse(message);
-                var res = {
-                    redirect: redirect
-                };
-                var req = {
-                    body: {
-                        login: message.login,
-                        password: message.password
-                    }
-                };
-                controllers['authController']['actionLogin'](req, res);
-            });
+            console.log('connected ' + socket.id);
+
+            var parameters = socket.handshake.query;
+
+            socket.emit('usersList', Object.keys(users));
+
+            var publicRooms = [];
+            for(var i in rooms) {
+                if(rooms[i].isPublic)
+                    publicRooms.push(i);
+            }
+
+            socket.emit('roomsList', publicRooms);
+
+            users[socket.id] = socket;
+
+            socket.broadcast.emit('newUser', socket.id);
+
+            onLogin();
+
+            //var user = User.findUnique(parameters.userName, parameters.email);
+
+            //console.log(user._id);
+            //if(!user._id) {
+            //    var req = {
+            //        body: {
+            //            userName: parameters.userName,
+            //            password: parameters.password,
+            //            email: parameters.email
+            //        }
+            //    };
+            //    controllers['authController']['actionRegister'](req, onLogin);
+            //}
+
+            //socket.on('login', function(message){
+            //   //var message = JSON.parse(message);
+            //    var res = {
+            //        redirect: redirect
+            //    };
+            //    var req = {
+            //        body: {
+            //            login: message.login,
+            //            password: message.password
+            //        }
+            //    };
+            //    controllers['authController']['actionLogin'](req, res);
+            //});
 
             function redirect(route){
                 switch (route){
@@ -36,6 +72,7 @@
             }
 
             function sendToken(){
+                //onLogin();
                 socket.emit('setToken', {})
             }
 
@@ -51,12 +88,26 @@
                  */
                 socket.on("room", function (message) {
                     var message = JSON.parse(message);
-                    users[message.userId] = socket;
-                    if (socket.room !== undefined) {
-                        socket.leave(socket.room);
+
+                    if(!~Object.keys(rooms).indexOf(message.room)) {
+                        rooms[message.room] = {isPublic: message.isPublic, users: message.users};
+
+                        for(var i = 0; i < message.users.length; i++) {
+                            users[message.users[i]].join(message.room);
+                        }
+
+                        rooms[message.room].users.push(socket.id);
+                        socket.join(message.room);
+                        io.to(message.room).emit('roomCreated', rooms[message.room].users);
                     }
-                    socket.room = message.room;
-                    socket.join(socket.room);
+
+                    if(!~rooms[message.room].users.indexOf(socket.id)) {
+                        rooms[message.room].users.push(socket.id);
+                        io.to(message.room).emit('some event')
+                        socket.join(message.room);
+                    }
+
+
                     socket.user_id = message.userId;
                     //var message = getUser();
                     socket.broadcast.in(socket.room).emit("knock-knock", message);

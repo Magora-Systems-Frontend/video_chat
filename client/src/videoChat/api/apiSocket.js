@@ -16,7 +16,7 @@
 
     function apiSocketFactory(socketFactory, apiUrl) {
         var socketConfig = {
-            ioSocket: io.connect(apiUrl, {login: 'test1', password: '123'})
+            ioSocket: io.connect(apiUrl, {query: 'userName=client2&password=1234&email=test@test.ru'})
         };
         var socket = socketFactory(socketConfig);
 

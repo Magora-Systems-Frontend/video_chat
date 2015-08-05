@@ -13,18 +13,26 @@
 
     userSchema.methods = {
         create: create,
-        getUserById: getUserById,
+        getById: getById,
         update: update,
         remove: remove
     };
+
+    userSchema.statics = {
+        findUnique: findUnique
+    }
 
     function create(user, cb){
         var user = new User(user);
         user.save(cb);
     }
 
-    function getUserById(userId, cb){
+    function getById(userId, cb){
         return User.find({id: userId}, cb)
+    }
+
+    function findUnique(userName, email, cb){
+        return User.findOne({ $and: {userName: userName, email: email}});
     }
 
     function update(user){
