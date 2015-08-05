@@ -96,6 +96,7 @@
                             users[message.users[i]].join(message.room);
                         }
 
+
                         rooms[message.room].users.push(socket.id);
                         socket.join(message.room);
                         io.to(message.room).emit('roomCreated', rooms[message.room].users);
