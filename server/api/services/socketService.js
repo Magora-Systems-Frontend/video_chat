@@ -8,11 +8,13 @@
 
     var io;
 
-    var connections = function(http){
+    var connections = function(server){
 
-        io = require('socket.io')(http);
+        var io = require('socket.io')(server);
+
         var users = {};
         var rooms = {};
+
 
         io.on('connection', function(socket){
 
@@ -36,6 +38,16 @@
 
             onLogin();
 
+            socket.on('disconnect', function(){
+                console.log('disconnected:' + socket.id);
+                console.log(socket.rooms);
+
+                for(var i = 0; i < socket.rooms.length; i++) {
+                    socket.broadcast.to(socket.rooms[i]).emit('userDisconnected', socket.id);
+                }
+
+                delete users[socket.id];
+            });
             //var user = User.findUnique(parameters.userName, parameters.email);
 
             //console.log(user._id);
@@ -83,9 +95,6 @@
             function onLogin() {
                 console.log('authorized');
 
-                /**
-                 * @params message - {userId, }
-                 */
                 socket.on("room", function (message) {
                     var message = JSON.parse(message);
 
@@ -93,39 +102,34 @@
                         rooms[message.room] = {isPublic: message.isPublic, users: message.users};
 
                         for(var i = 0; i < message.users.length; i++) {
-                            users[message.users[i]].join(message.room);
+                            console.log(users[message.users[i]]);
+                            users[message.users[i]].join(message.room, function(err){ if(err) console.log(err)});
                         }
 
 
                         rooms[message.room].users.push(socket.id);
                         socket.join(message.room);
-                        io.to(message.room).emit('roomCreated', rooms[message.room].users);
+                        io.to(message.room).emit('roomCreated', {room: message.room, users: rooms[message.room].users, rooms: Object.keys(rooms)});
+                    } else {
+                        if(!~rooms[message.room].users.indexOf(socket.id)) {
+                            rooms[message.room].users.push(socket.id);
+                            socket.join(message.room);
+                            socket.broadcast.to(message.room).emit('userJoined', {room: message.room, user: socket.id});
+                        }
                     }
-
-                    if(!~rooms[message.room].users.indexOf(socket.id)) {
-                        rooms[message.room].users.push(socket.id);
-                        io.to(message.room).emit('some event')
-                        socket.join(message.room);
-                    }
-
-
-                    socket.user_id = message.userId;
-                    //var message = getUser();
-                    socket.broadcast.in(socket.room).emit("knock-knock", message);
                 });
 
-                /**
-                 * broadcast in room user message
-                 * @params message - {userId, data:{}}
-                 */
+                socket.on("leave", function () {
+                    console.log('leaved');
+                })
+
                 socket.on("message", function (message) {
                     var message = JSON.parse(message);
-                    if (!users[message.userId])
-                        throw new Error('User not exist in any room');
-                    var socket = users[message.userId];
-                    socket.join(socket.room);
-                    socket.user_id = message.userId;
-                    socket.broadcast.to(socket.room).emit("say", message);
+                    if(~Object.keys(rooms).indexOf(message.room)) {
+                        socket.broadcast.to(message.room).emit('newMessage', {room: message.room, sender: socket.id, message: message.message});
+                    } else {
+                        console.log('Room not exist');
+                    }
                 });
             }
         });

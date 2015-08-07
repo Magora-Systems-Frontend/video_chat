@@ -9,6 +9,6 @@
         .module('videoChat.constants', [
             "btford.socket-io"
         ])
-        .constant('apiUrl', 'http://localhost:8088');
+        .constant('apiUrl', 'localhost:8088');
 
 })(angular);

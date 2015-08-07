@@ -5,8 +5,7 @@
     //********************CORE*************************************
 
     var app = require('express')();
-    var http = require('http').Server(app);
-    var io = require('socket.io')(http);
+    var server = require('http').Server(app);
     var bcrypt = require('bcrypt-nodejs');
 
     var argv = require('minimist')(process.argv.slice(2));
@@ -107,9 +106,12 @@
     //********************ROUTING**********************************
 
     require('./api/services/route.js')(configApp.config, app);
-    require('./api/services/socketService.js')(http);
 
-    http.listen(configApp.config.server.port);
+    //app.listen(configApp.config.server.port);
+    server.listen(configApp.config.server.port);
+
+
+    require('./api/services/socketService.js')(server);
 
     console.log('Server running on ' + configApp.config.server.port + ' port, env "' + app.get('env') + '"');
 })();

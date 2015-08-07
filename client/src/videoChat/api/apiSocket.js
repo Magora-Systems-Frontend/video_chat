@@ -1,6 +1,7 @@
 /**
  * Created by akulov on 28.07.2015.
  */
+var tmpSocket = null;
 (function (angular) {
 
     'use strict';
@@ -16,19 +17,45 @@
 
     function apiSocketFactory(socketFactory, apiUrl) {
         var socketConfig = {
-            ioSocket: io.connect(apiUrl, {query: 'userName=client2&password=1234&email=test@test.ru'})
+            ioSocket: io.connect(apiUrl)
         };
+        console.log(apiUrl);
         var socket = socketFactory(socketConfig);
 
-        socket.on('connect', function(){
-            socket.emit('login', {
-                login: "test1",
-                password: "123"
-            });
-            socket.on('setToken', function(message){
-                window.sessionStorage["videoChat"] = message.token;
-            });
+        socket.on('usersList', function(message){
+            console.log('usersList');
+            console.log(message);
         });
+
+        socket.on('newUser', function(message){
+            console.log('newUser: ' + message);
+        });
+
+        socket.on('roomsList', function(message){
+            console.log('roomsList');
+            console.log(message);
+        });
+
+        socket.on('userDisconnected', function(message){
+            console.log('userDisconnected: ' + message);
+        });
+
+        socket.on('roomCreated', function(message){
+            console.log('roomCreated');
+            console.log(message);
+        });
+
+        socket.on('userJoined', function(message){
+            console.log('userJoined');
+            console.log(message);
+        });
+
+        socket.on('newMessage', function(message){
+            console.log('newMessage');
+            console.log(message);
+        });
+
+        tmpSocket = socket;
 
         return socket;
     }
