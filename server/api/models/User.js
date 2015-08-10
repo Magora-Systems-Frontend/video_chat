@@ -20,7 +20,7 @@
 
     userSchema.statics = {
         findUnique: findUnique
-    }
+    };
 
     function create(user, cb){
         var user = new User(user);

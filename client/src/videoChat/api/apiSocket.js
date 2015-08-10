@@ -31,6 +31,10 @@ var tmpSocket = null;
             console.log('newUser: ' + message);
         });
 
+        socket.on('usersNotFound', function(){
+            console.log('usersNotFound');
+        });
+
         socket.on('roomsList', function(message){
             console.log('roomsList');
             console.log(message);
@@ -39,6 +43,13 @@ var tmpSocket = null;
         socket.on('userDisconnected', function(message){
             console.log('userDisconnected: ' + message);
         });
+
+        socket.on('userDisconnectedFromRoom', function(message){
+            console.log('userDisconnectedFromRoom: ' + message);
+        });
+
+
+
 
         socket.on('roomCreated', function(message){
             console.log('roomCreated');
