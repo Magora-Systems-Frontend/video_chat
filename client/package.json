@@ -4,7 +4,9 @@
   "description": "",
   "main": "gulp bild --env production",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preinstall": "npm i -g gulp gulp-angular-templatecache gulp-coffee gulp-concat gulp-data gulp-if gulp-jade gulp-jshint gulp-minify-css gulp-minify-html gulp-stylus gulp-uglify gulp-watch gulp-webserver jshint-stylish minimist require-dir",
+    "postinstall": "npm link gulp gulp-angular-templatecache gulp-coffee gulp-concat gulp-data gulp-if gulp-jade gulp-jshint gulp-minify-css gulp-minify-html gulp-stylus gulp-uglify gulp-watch gulp-webserver jshint-stylish minimist require-dir"
   },
   "repository": {
     "type": "git",
