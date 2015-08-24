@@ -1,0 +1,18 @@
+{
+  "default": {
+    "auth": {
+      "restricted": {
+      	"status": 401,
+      	"response": {
+      		"message": "Authorization required."
+      	}
+      },
+      "invalid": {
+      	"status": 400,
+      	"response": {
+      		"message": "Invalid credentials."
+      	}
+      } 
+    }
+  }
+}
