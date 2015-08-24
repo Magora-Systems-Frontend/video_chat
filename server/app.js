@@ -7,6 +7,7 @@
     var app = require('express')();
     var server = require('http').Server(app);
     var bcrypt = require('bcrypt-nodejs');
+    var bodyParser = require('body-parser');
 
     var argv = require('minimist')(process.argv.slice(2));
     app.set('env', argv.p ? 'prod' : 'dev');
@@ -18,6 +19,10 @@
     var configApp = require('./config/index.js');
     configApp.init(app.get('env'));
     app.set('config', configApp.config);
+
+
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
 
 
     if (app.get('config').cors) {
