@@ -6,7 +6,7 @@
     var Schema = mongoose.Schema;
 
     var userSchema = new Schema({
-        userName: { type: String, required: true, unique: true },
+        name: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         email: { type: String, required: true, unique: true }
     });
@@ -32,7 +32,7 @@
     }
 
     function findUnique(userName, email, cb){
-        return User.findOne({ $and: {userName: userName, email: email}});
+        return User.findOne({ $and: {name: userName, email: email}});
     }
 
     function update(user){
