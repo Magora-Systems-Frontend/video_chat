@@ -2,21 +2,29 @@
 
     'use strict';
 
-    var passport = require("passport");
-    var User = require('../models/User.js');
+    var passport = require("passport"),
+        User = require('../models/User.js'),
+        configApp = require('../../config/index.js'),
+        config = configApp.config,
+        errors = config.errors;
 
     function _ensureAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) { return next(); }
-        res.redirect('/login')
+        if (!req.isAuthenticated()) { 
+            return res.status(errors.auth.restricted.status).json(errors.auth.restricted.response);
+        }
+        return next(); 
     }
 
     var messageController = {
         actionGetUserMessages: getUserMessages
     };
 
-    function getUserMessages(req, res) {
-        if(!req.isAuthenticated()) return;
-        res.json(
+    function getUserMessages(req, res, next) {
+        if (!req.isAuthenticated()) { 
+            return res.status(errors.auth.restricted.status).json(errors.auth.restricted.response);
+        }
+
+        return res.json(
         [
         {
             sender:{

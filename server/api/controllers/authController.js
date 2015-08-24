@@ -2,9 +2,11 @@
 
     'use strict';
 
-    var passport = require("passport");
-
-    var User = require('../models/User.js');
+    var passport = require("passport"),
+        User = require('../models/User.js'),
+        configApp = require('../../config/index.js'),
+        config = configApp.config,
+        errors = config.errors;
 
 
     var authController = {
@@ -15,8 +17,10 @@
     };
 
     function _ensureAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) { return next(); }
-        res.redirect('/login')
+        if (!req.isAuthenticated()) { 
+            return res.status(errors.auth.restricted.status).json(errors.auth.restricted.response);
+        }
+        return next(); 
     }
 
     function index(req, res) {
@@ -29,9 +33,11 @@
 
         passport.authenticate('local',
             function (err, user, info) {
-                if(err)
-                    res.redirect('login');
-                res.redirect('/');
+                console.log(err, user, info);
+                if(err){
+                    return res.status(errors.auth.invalid.status).json(errors.auth.invalid.response);
+                }
+                return res.json(user);
             }
         )(req, res);
     }
@@ -41,18 +47,22 @@
         res.redirect('/');
     }
 
-    function register(req, cb){
+    function register(req, res, cb){
+
+        var name = req.body.name,
+            password = req.body.password,
+            email = req.body.email;
 
         var user = new User({
-            userName: req.body.userName,
-            password: req.body.password,
-            email: req.body.email
+            name: name,
+            password: password,
+            email: email
         });
 
-        user.save(function(err) {
+        user.save(function(err, user) {
+
             if(err) {
-                console.log(err);
-                return;
+                return res.status(errors.auth.invalid.status).json(errors.auth.invalid.response);
             }
 
             return cb();
