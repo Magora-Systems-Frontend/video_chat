@@ -8,6 +8,8 @@
     var server = require('http').Server(app);
     var bcrypt = require('bcrypt-nodejs');
     var bodyParser = require('body-parser');
+    var cookieParser = require('cookie-parser');
+    var session      = require('express-session');
 
     var argv = require('minimist')(process.argv.slice(2));
     app.set('env', argv.p ? 'prod' : 'dev');
@@ -20,9 +22,11 @@
     configApp.init(app.get('env'));
     app.set('config', configApp.config);
 
-
+    app.use(require('morgan')('combined'));
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+    app.use(cookieParser());
+    app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
 
 
     if (app.get('config').cors) {
@@ -44,6 +48,7 @@
     //********************PASSPORT*********************************
 
     var passport = require('passport');
+    var LocalStrategy = require('passport-local').Strategy;
     var _token = (function() {
         var txt =
             'Идет гражданская война. Космические корабли' +
@@ -76,37 +81,60 @@
 
     })();
 
-    var LocalStrategy = require('passport-local').Strategy;
     passport.use(new LocalStrategy({
-        usernameField: 'userName',
+        usernameField: 'name',
         passwordField: 'password'
-    }, function(username, password, next) {
-        User
-            .findOne()
-            .where({
-                or: [{
-                    userName: username
-                }, {
-                    email: username
-                }]
-            })
-            .done(function(error, user) {
+    }, function(identifier, password, next) {
+        User.findOne({$or: [{ name: identifier }, { email: identifier }] }, 
+            function(error, user) {
                 //Сигнатура next-callback'а:
                 //next(error, user, info);
+                console.log('found user---->', error, user);
                 if (error) {
                     next(error);
                 } else if (!user) {
                     next(false, false, 'This user not exists');
-                } else if (!bcrypt.compareSync(password, user.password)) {
-                    next(false, false, 'Wrong password');
+                //} else if (!bcrypt.compareSync(password, user.password)) {
+                //    next(false, false, 'Wrong password');
                 } else {
-                    Token.create({key: _token.getHash(user.userName)});
-                    next(false, user);
+
+                    Token.findOne({userId: user._id}, function(err, result){
+                        if(result){
+                            next(false, user, result);
+                        } else {
+                            var newToken = new Token({
+                                key: _token.getHash(user.name),
+                                userId: user._id
+                            });
+
+                            newToken.save(newToken, function(err, token){
+                                if(err){
+                                    next(err, null);
+                                } else {
+                                    next(false, user, token);
+                                }
+
+                            });
+                        }
+                    });
+                    
                 }
             });
     }));
 
+    passport.serializeUser(function(user, cb) {
+        cb(null, user.id);
+    });
+
+    passport.deserializeUser(function(id, cb) {
+        User.findById(id, function (err, user) {
+            if (err) { return cb(err); }
+                cb(null, user);
+        });
+    });
+
     app.use(passport.initialize());
+    app.use(passport.session()); // persistent login sessions
 
     //********************ROUTING**********************************
 
