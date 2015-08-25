@@ -7,8 +7,12 @@
 
     var tokenSchema = new Schema({
         key: {type: String, required: true},
-        userId: {type: Number, required: true},
-        expireDate: {type: Date, required: true, default: new Date(Date.now() + 30 * 60000) }
+        userId: {type: String, required: true},
+        expiresAt: {
+            type: String,
+            default: new Date(Date.now() + 30 * 60000), 
+            expires: '30m' 
+        }
     });
 
     tokenSchema.methods = {
