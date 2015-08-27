@@ -7,12 +7,13 @@
 
     var messageSchema = new Schema({
         text: {type: String, required: true},
-        senderId: {type: Number, required: true},
-        senderType: {type: String, required: true},
-        listenerId: {type: Number, required: true},
-        whoIsRead: {
-            id: {type: Number}
-        },
+        sender: {type: String, required: true},
+        room: {type: String, required: true},
+        type: {type: String, required: true},
+        //listenerId: {type: Number, required: true},
+        //whoIsRead: {
+        //    id: {type: Number}
+        //},
         date: {type: Date, required: true, default: Date.now() }
     });
 
@@ -23,7 +24,7 @@
      * @returns {Query}
      */
     messageSchema.methods.getMessagesBySenderId = function(senderId, senderType){
-        return Message.find({senderId: senderId, senderType: senderType})
+        return Message.find({sender: senderId, type: senderType})
     };
     /**
      *
