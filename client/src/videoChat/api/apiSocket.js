@@ -23,8 +23,7 @@ var tmpSocket = null;
         var socket = socketFactory(socketConfig);
 
         socket.on('usersList', function(message){
-            console.log('usersList');
-            console.log(message);
+            console.log('usersList', message);
         });
 
         socket.on('newUser', function(message){
@@ -36,8 +35,7 @@ var tmpSocket = null;
         });
 
         socket.on('roomsList', function(message){
-            console.log('roomsList');
-            console.log(message);
+            console.log('roomsList', message);
         });
 
         socket.on('userDisconnected', function(message){
@@ -52,18 +50,15 @@ var tmpSocket = null;
 
 
         socket.on('roomCreated', function(message){
-            console.log('roomCreated');
-            console.log(message);
+            console.log('roomCreated', message);
         });
 
         socket.on('userJoined', function(message){
-            console.log('userJoined');
-            console.log(message);
+            console.log('userJoined', message);
         });
 
         socket.on('newMessage', function(message){
-            console.log('newMessage');
-            console.log(message);
+            console.log('newMessage', message);
         });
 
         tmpSocket = socket;
