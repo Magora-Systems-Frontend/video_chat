@@ -55,6 +55,7 @@
         user.save(function(err, user) {
 
             if(err) {
+                console.log(err);
                 return res.status(errors.auth.invalid.status).json(errors.auth.invalid.response);
             }
             doAuth(req, res);

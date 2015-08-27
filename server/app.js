@@ -4,25 +4,23 @@
 
     //********************CORE*************************************
 
-    var app = require('express')();
-    var server = require('http').Server(app);
-    var bcrypt = require('bcrypt-nodejs');
-    var bodyParser = require('body-parser');
-    var cookieParser = require('cookie-parser');
-    var session      = require('express-session');
-
-    var argv = require('minimist')(process.argv.slice(2));
+    var app = require('express')(),
+        server = require('http').Server(app),
+        bcrypt = require('bcryptjs'),
+        bodyParser = require('body-parser'),
+        cookieParser = require('cookie-parser'),
+        session      = require('express-session'),
+        User = require('./api/models/User.js'),
+        Token = require('./api/models/Token.js'),
+        argv = require('minimist')(process.argv.slice(2));
+    
     app.set('env', argv.p ? 'prod' : 'dev');
-
-    var User = require('./api/models/User.js');
-    var Token = require('./api/models/Token.js');
 
     //********************CONFIG***********************************
     var configApp = require('./config/index.js');
     configApp.init(app.get('env'));
     app.set('config', configApp.config);
 
-    app.use(require('morgan')('combined'));
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(cookieParser());
@@ -49,73 +47,45 @@
 
     var passport = require('passport');
     var LocalStrategy = require('passport-local').Strategy;
-    var _token = (function() {
-        var txt =
-            'Идет гражданская война. Космические корабли' +
-            'повстанцев, наносящие удар с тайной базы,' +
-            'одержали первую победу, в схватке' +
-            'со зловещей Галактической Империей.' +
-            'Во время сражения, разведчикам повстанцев' +
-            'удалось похитить секретные планы,' +
-            'связанные с главным оружием Империи -' +
-            'Звездой Смерти, бронированной космической' +
-            'станцией, способной уничтожить целую планету.' +
-            'Преследуемая имперскими агентами принцесса' +
-            'Лея спешит домой на своем звездном корабле.' +
-            'При ней находятся похищенные планы,' +
-            'которые могут спасти ее народ' +
-            'и вернуть свободу галактике.';
-
-        function compare(login, hash){
-            return bcrypt.compareSync((login + txt), hash)
-        }
-
-        function getHash(login){
-            return bcrypt.hashSync(txt+login);
-        }
-
-        return {
-            compare: compare,
-            getHash: getHash
-        }
-
-    })();
 
     passport.use(new LocalStrategy({
         usernameField: 'name',
         passwordField: 'password'
     }, function(identifier, password, next) {
         User.findOne({$or: [{ name: identifier }, { email: identifier }] }, 
-            function(error, user) {
+            function(err, user) {
                 //Сигнатура next-callback'а:
                 //next(error, user, info);
-                console.log('found user---->', error, user);
-                if (error) {
-                    next(error);
-                } else if (!user) {
-                    next(false, false, 'This user not exists');
-                //} else if (!bcrypt.compareSync(password, user.password)) {
-                //    next(false, false, 'Wrong password');
+
+                if (err) {
+                    next(err);
                 } else {
-
-                    Token.findOne({userId: user._id}, function(err, result){
-                        if(result){
-                            next(false, user, result);
+                    User.checkPassword(password, user.password, function(err, isMatch){
+                        
+                        if(err || !isMatch){
+                            next(err);
                         } else {
-                            var newToken = new Token({
-                                key: _token.getHash(user.name),
-                                userId: user._id
-                            });
-
-                            newToken.save(newToken, function(err, token){
-                                if(err){
-                                    next(err, null);
+                            Token.findOne({userId: user._id}, function(err, result){
+                                if(result){
+                                    next(false, user, result);
                                 } else {
-                                    next(false, user, token);
-                                }
+                                    var newToken = new Token({
+                                        key: bcrypt.hashSync(user.name, 8),
+                                        userId: user._id
+                                    });
 
+                                    newToken.save(newToken, function(err, token){
+                                        if(err){
+                                            next(err, null);
+                                        } else {
+                                            next(false, user, token);
+                                        }
+
+                                    });
+                                }
                             });
                         }
+
                     });
                     
                 }
