@@ -23,7 +23,13 @@
 
             var parameters = socket.handshake.query;
 
-            socket.emit('usersList', Object.keys(users));
+            User.list({}, function(err, users){
+                console.log('result ------>', err, users);
+                if(!err){
+                    socket.emit('usersList', users);
+                }
+            });
+
 
             var publicRooms = [];
             for(var i in rooms) {
