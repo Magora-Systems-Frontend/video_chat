@@ -10,17 +10,17 @@
         userId: {type: String, required: true},
         expiresAt: {
             type: String,
-            default: new Date(Date.now() + 30 * 60000), 
-            expires: '30m' 
+            default: new Date(Date.now() + 30 * 60000)
         }
     });
+
+    tokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 30 * 60 });
 
     tokenSchema.methods = {
         checkTokenByKey: checkTokenByKey,
         create: create,
         update: update,
         remove: remove
-
     };
 
     /**
